@@ -52,19 +52,19 @@ jobs:
           tflint -f compact
         working-directory: ${{ env.TF_MODULE_PATH }}
 
-      - name: ${{ env.MODULE_NAME }} Terraform Init
+      - name: Terraform Init
         run: |
           terraform init -input=false -backend=true -backend-config="env/${{ env.ENV_NAME }}/backend.tfvars"
         shell: bash
         working-directory: ${{ env.TF_MODULE_PATH }}
 
-      - name: ${{ env.MODULE_NAME }} Terraform Validate
+      - name: Terraform Validate
         run: |
           terraform validate
         working-directory: ${{ env.TF_MODULE_PATH }}
         shell: bash
 
-      - name: ${{ env.MODULE_NAME }} Terraform Plan
+      - name: Terraform Plan
         if: ${{ github.ref == 'refs/tags/dev-infra-plan' }}
         run: |
           terraform plan -input=false -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
@@ -72,13 +72,13 @@ jobs:
         working-directory: ${{ env.TF_MODULE_PATH }}
 
       - name: Terraform Security Scan
-        uses: triat/terraform-security-scan@v2.2.3
+        uses: triat/terraform-security-scan@v3.0.0
         with:
           tfsec_actions_working_dir: ${{ env.TF_MODULE_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ${{ env.MODULE_NAME }} Terraform Apply
+      - name: Terraform Apply
         if: ${{ github.ref == 'refs/tags/dev-infra-apply' }}
         run: |
           terraform apply -input=false -auto-approve -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
