@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "github:deploy:dev:plan": "./infra/utils/set-release-tag.sh dev-infra-plan",
+    "github:deploy:dev:apply": "./infra/utils/set-release-tag.sh dev-infra-apply"
+  }
+}

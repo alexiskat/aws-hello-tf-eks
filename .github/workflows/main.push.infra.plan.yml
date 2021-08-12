@@ -1,0 +1,86 @@
+name: main-push-infra
+
+on:
+  push:
+    branches:    
+      # Push events on main branch
+      - main
+    tags:
+      - "dev-infra-plan"
+      - "dev-infra-apply"
+
+env:
+  TF_MODULE_PATH: infra
+  ENV_NAME: dev
+
+jobs:
+  ps-tf-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEV_AWS_TFA_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEV_AWS_TFA_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Configure Terraform v0.15.4
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.4
+          terraform_wrapper: false
+
+      - name: Check Terraform fmt
+        run: |
+          terraform fmt -diff -check -recursive
+        shell: bash
+        working-directory: ${{ env.TF_MODULE_PATH }}
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v1
+        with:
+          tflint_version: latest
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run TFLint
+        run: |
+          tflint --version
+          tflint -f compact
+        working-directory: ${{ env.TF_MODULE_PATH }}
+
+      - name: ${{ env.MODULE_NAME }} Terraform Init
+        run: |
+          terraform init -input=false -backend=true -backend-config="env/${{ env.ENV_NAME }}/backend.tfvars"
+        shell: bash
+        working-directory: ${{ env.TF_MODULE_PATH }}
+
+      - name: ${{ env.MODULE_NAME }} Terraform Validate
+        run: |
+          terraform validate
+        working-directory: ${{ env.TF_MODULE_PATH }}
+        shell: bash
+
+      - name: ${{ env.MODULE_NAME }} Terraform Plan
+        if: ${{ github.ref == 'refs/tags/dev-infra-plan' }}
+        run: |
+          terraform plan -input=false -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
+        shell: bash
+        working-directory: ${{ env.TF_MODULE_PATH }}
+
+      - name: Terraform Security Scan
+        uses: triat/terraform-security-scan@v2.2.3
+        with:
+          tfsec_actions_working_dir: ${{ env.TF_MODULE_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ${{ env.MODULE_NAME }} Terraform Apply
+        if: ${{ github.ref == 'refs/tags/dev-infra-apply' }}
+        run: |
+          terraform apply -input=false -auto-approve -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
+        shell: bash
+        working-directory: ${{ env.TF_MODULE_PATH }}
