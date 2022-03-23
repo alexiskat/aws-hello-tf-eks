@@ -41,3 +41,5 @@ jobs:
       - name: validate the tasks-file
         run: org-formation validate-tasks organization-tasks.yml
 
+      - name: Create change-set
+        run: org-formation create-change-set

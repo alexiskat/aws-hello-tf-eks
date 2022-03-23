@@ -20,7 +20,7 @@ Organization:
       DefaultOrganizationAccessRoleName: OrganizationAccountAccessRole
       ServiceControlPolicies:
         - !Ref DenyChangeOfOrgRoleSCP
-        - !Ref RestrictUnusedRegionsSCP
+
 
 #
 # OU definitions
