@@ -15,6 +15,9 @@ permissions:
 jobs:
   aws-account-formation:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra/aws-acc-org
 
     steps:
       - name: Git Checkout
@@ -34,4 +37,7 @@ jobs:
 
       - name: install aws-organization-formation
         run: npm i aws-organization-formation -g
+      
+      - name: validate the tasks-file
+        run: org-formation validate-tasks organization-tasks.yml
 
