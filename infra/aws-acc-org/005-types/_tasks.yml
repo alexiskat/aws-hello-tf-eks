@@ -1,0 +1,15 @@
+Parameters:
+  <<: !Include "../organization-parameters.yml"
+
+  catalogBucket:
+    Type: String
+    Default: community-resource-provider-catalog
+
+SsoAssignmentGroupRp:
+  Type: register-type
+  ResourceType: "Community::SSO::AssignmentGroup"
+  SchemaHandlerPackage: !Sub "s3://${catalogBucket}/community-sso-assignmentgroup-0.3.1.zip"
+  MaxConcurrentTasks: 10
+  OrganizationBinding:
+    IncludeMasterAccount: true
+    Region: !Ref primaryRegion

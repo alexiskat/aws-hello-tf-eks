@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: '2010-09-09-OC'
+Description: default template generated for organization with master account 339638031741
+
+Organization:
+  MasterAccount:
+    Type: OC::ORG::MasterAccount
+    Properties:
+      AccountName: mng
+      AccountId: '339638031741'
+      RootEmail: alexis.aws.acc+mng@gmail.com
+      Alias: alexis-mng
+      Tags:
+        budget-alarm-threshold: '10'
+        budget-alarm-threshold-email-recipient: alexis.aws.acc+mng@gmail.com
+        account-owner-email: alexis.aws.acc+mng@gmail.com
+
+  OrganizationRoot:
+    Type: OC::ORG::OrganizationRoot
+    Properties:
+      DefaultOrganizationAccessRoleName: OrganizationAccountAccessRole
+      ServiceControlPolicies:
+        - !Ref DenyChangeOfOrgRoleSCP
+        - !Ref RestrictUnusedRegionsSCP
+
+#
+# OU definitions
+#
+  SuspendedOU:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: suspended
+  
+  DevelopmentOU:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: development
+      Accounts:
+        - !Ref DevelopmentAccount01
+
+  SharedOU:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: shared
+      Accounts:
+        - !Ref SharedAccount
+
+#
+# Accounts definitions
+#
+  DevelopmentAccount01:
+    Type: OC::ORG::Account
+    Properties:
+      Alias: alexis-dev01
+      AccountName: Development Account
+      RootEmail: alexis.aws.acc+dev01@gmail.com
+      Tags:
+        budget-alarm-threshold: '10'
+        budget-alarm-threshold-email-recipient: alexis.aws.acc+dev01@gmail.com 
+        account-owner-email: alexis.aws.acc+mng@gmail.com
+        subdomain: development1
+
+  SharedAccount:
+    Type: OC::ORG::Account
+    Properties:
+      Alias: alexis-shared
+      AccountName: Shared Account
+      RootEmail: alexis.aws.acc+shared@gmail.com
+      Tags:
+        budget-alarm-threshold: '10'
+        budget-alarm-threshold-email-recipient: alexis.aws.acc+shared@gmail.com 
+        account-owner-email: alexis.aws.acc+mng@gmail.com
+        subdomain: shared
+#
+# SCP Policy definitions
+#
+
+  DenyChangeOfOrgRoleSCP:
+    Type: OC::ORG::ServiceControlPolicy
+    Properties:
+      PolicyName: DenyChangeOfOrgRole
+      Description: Deny changing the IAM role used for organization access
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyChangeOfOrgRole
+            Effect: Deny
+            Action:
+              - 'iam:Attach*'
+              - 'iam:Create*'
+              - 'iam:Delete*'
+              - 'iam:Detach*'
+              - 'iam:PutRole*'
+              - 'iam:Update*'
+            Resource:
+              - 'arn:aws:iam::*:role/OrganizationAccountAccessRole'
+        
+  RestrictUnusedRegionsSCP:
+    Type: OC::ORG::ServiceControlPolicy
+    Properties:
+      PolicyName: RestrictUnusedRegions
+      Description: Restrict Unused regions
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyUnsupportedRegions
+            Effect: Deny
+            NotAction:
+              - 'cloudfront:*'
+              - 'iam:*'
+              - 'route53:*'
+              - 'support:*'
+              - 'budgets:*'
+            Resource: '*'
+            Condition:
+              StringNotEquals:
+                'aws:RequestedRegion':
+                  - eu-west-1
+                  - us-east-1
