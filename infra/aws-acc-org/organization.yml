@@ -21,7 +21,6 @@ Organization:
       ServiceControlPolicies:
         - !Ref DenyChangeOfOrgRoleSCP
 
-
 #
 # OU definitions
 #
