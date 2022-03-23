@@ -1,0 +1,35 @@
+name: awsorg.branch.push
+
+on:
+  push:
+    branches-ignore:    
+      # Push event on feature branch only
+      - main
+    paths:
+      - infra/aws-acc-org**
+
+permissions:
+  id-token: write # required to use OIDC authentication
+  contents: read # required to checkout the code from the repo
+
+jobs:
+  ps-tf-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_MNG_ROLE_ARN_GH_ACTIONS }}
+          role-duration-seconds: 900 # the ttl of the session, in seconds.
+          aws-region: eu-west-1 # use your region here.
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+      - name: install firebase
+        run: npm i aws-organization-formation -g
+
