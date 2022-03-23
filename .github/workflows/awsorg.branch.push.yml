@@ -13,7 +13,7 @@ permissions:
   contents: read # required to checkout the code from the repo
 
 jobs:
-  ps-tf-data:
+  aws-account-formation:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,10 +26,10 @@ jobs:
           role-to-assume: ${{ secrets.AWS_MNG_ROLE_ARN_GH_ACTIONS }}
           role-duration-seconds: 900 # the ttl of the session, in seconds.
           aws-region: eu-west-1 # use your region here.
-      - uses: actions/setup-node@v2
+
+      - name: configure aws node
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
-          cache: 'npm'
-      - name: install firebase
         run: npm i aws-organization-formation -g
 
