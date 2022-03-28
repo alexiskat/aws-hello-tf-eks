@@ -6,6 +6,7 @@ on:
     branches-ignore:    
       # Push event on feature branch only
       - main
+    # Path filters are not evaluated for pushes of tags
     paths:
       - infra/aws-acc-org/**
 

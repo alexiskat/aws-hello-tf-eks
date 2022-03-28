@@ -2,9 +2,11 @@ name: infra.branch.push
 
 on:
   push:
+    #Both branches/branches-ignore and paths will only run when both filters are satisfied.
     branches-ignore:    
       # Push event on feature branch only
       - main
+    # Path filters are not evaluated for pushes of tags
     paths:
       - infra/01-composition/eu-west-01/**
       - infra/02-module/**
@@ -17,7 +19,7 @@ permissions:
   contents: read # required to checkout the code from the repo
 
 env:
-  TF_MODULE_PATH: infra/01-composition/eu-west-01/dev
+  TF_MODULE_PATH: infra/01-composition/eu-west-01/
   ENV_NAME: dev
   AWS_REGION: eu-west-1
 
@@ -32,11 +34,11 @@ jobs:
       - name: Git Checkout
         uses: actions/checkout@v2
 
-      - name: Configure AWS Credentials
+      - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.DEV_AWS_TFA_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEV_AWS_TFA_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_DEV_ROLE_ARN_TF_GH_ACTIONS }}
+          role-duration-seconds: 900 # the ttl of the session, in seconds.
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure Terraform v0.15.4
