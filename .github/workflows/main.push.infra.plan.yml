@@ -1,21 +1,32 @@
-name: main-push-infra
+name: infra.branch.push
 
 on:
   push:
-    branches:    
-      # Push events on main branch
+    branches-ignore:    
+      # Push event on feature branch only
       - main
-    tags:
-      - "dev-infra-plan"
-      - "dev-infra-apply"
+    paths:
+      - infra/01-composition/eu-west-01/**
+      - infra/02-module/**
+      - infra/03-resource/**
+#    tags:
+#      - "dev-infra-plan"
+#      - "dev-infra-apply"
+permissions:
+  id-token: write # required to use OIDC authentication
+  contents: read # required to checkout the code from the repo
 
 env:
-  TF_MODULE_PATH: infra
+  TF_MODULE_PATH: infra/01-composition/eu-west-01/dev
   ENV_NAME: dev
+  AWS_REGION: eu-west-1
 
 jobs:
-  ps-tf-data:
+  tf-plan:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_MODULE_PATH }}
 
     steps:
       - name: Git Checkout
@@ -26,7 +37,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.DEV_AWS_TFA_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.DEV_AWS_TFA_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure Terraform v0.15.4
         uses: hashicorp/setup-terraform@v1
