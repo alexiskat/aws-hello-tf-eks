@@ -18,7 +18,7 @@ permissions:
 
 env:
   TF_ROOT_PATH: infra/tf/
-  TF_ENTRY_POINT_PATH: infra/tf/01-composition/eu-west-01/
+  TF_ENTRY_POINT_PATH: infra/tf/01-composition/
   ENV_NAME: dev
   AWS_REGION: eu-west-1
 
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ env.TF_ROOT_PATH }}
 
     steps:
       - name: Git Checkout
@@ -50,7 +50,7 @@ jobs:
         run: |
           terraform fmt -diff -check -recursive
         shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ env.TF_ROOT_PATH }}
 
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v1
@@ -62,7 +62,7 @@ jobs:
         run: |
           tflint --version
           tflint -f compact
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ env.TF_ROOT_PATH }}
 
       - name: Terraform Init
         run: |
