@@ -8,9 +8,7 @@ on:
       - main
     # Path filters are not evaluated for pushes of tags
     paths:
-      - infra/01-composition/eu-west-01/**
-      - infra/02-module/**
-      - infra/03-resource/**
+      - infra/tf/**
 #    tags:
 #      - "dev-infra-plan"
 #      - "dev-infra-apply"
@@ -19,7 +17,8 @@ permissions:
   contents: read # required to checkout the code from the repo
 
 env:
-  TF_MODULE_PATH: infra/01-composition/eu-west-01/
+  TF_ROOT_PATH: infra/tf/
+  TF_ENTRY_POINT_PATH: infra/tf/01-composition/eu-west-01/
   ENV_NAME: dev
   AWS_REGION: eu-west-1
 
@@ -41,10 +40,10 @@ jobs:
           role-duration-seconds: 900 # the ttl of the session, in seconds.
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Configure Terraform v0.15.4
-        uses: hashicorp/setup-terraform@v1
+      - name: Configure Terraform v1.1.7
+        uses: hashicorp/setup-terraform@v1.3.2
         with:
-          terraform_version: 0.15.4
+          terraform_version: 1.1.7
           terraform_wrapper: false
 
       - name: Check Terraform fmt
