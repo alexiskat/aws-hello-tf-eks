@@ -56,7 +56,7 @@ jobs:
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
-          directory: example/examplea
+          directory: ${{ env.TF_ROOT_PATH }}
           framework: terraform 
 # Use for PR only      
 #      - name: Terraform Security Scan
