@@ -52,10 +52,17 @@ jobs:
         shell: bash
         working-directory: ${{ env.TF_ROOT_PATH }}
       
-      - name: Terraform Security Scan
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+      - name: Test with Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: example/examplea
+          framework: terraform 
+# Use for PR only      
+#      - name: Terraform Security Scan
+#        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terraform Init
         run: |
