@@ -103,7 +103,9 @@ variable "cors_rule" {
 variable "versioning" {
   description = "Map containing versioning configuration."
   type        = map(string)
-  default     = {}
+  default = {
+    enabled = true
+  }
 }
 
 variable "logging" {
