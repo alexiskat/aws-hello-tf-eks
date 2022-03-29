@@ -147,13 +147,13 @@ variable "object_lock_configuration" {
 variable "block_public_acls" {
   description = "Whether Amazon S3 should block public ACLs for this bucket."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "block_public_policy" {
   description = "Whether Amazon S3 should block public bucket policies for this bucket."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "ignore_public_acls" {
@@ -165,7 +165,7 @@ variable "ignore_public_acls" {
 variable "restrict_public_buckets" {
   description = "Whether Amazon S3 should restrict public bucket policies for this bucket."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "control_object_ownership" {
