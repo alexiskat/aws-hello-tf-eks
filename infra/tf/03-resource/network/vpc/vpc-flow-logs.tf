@@ -95,19 +95,15 @@ resource "aws_iam_policy" "vpc_flow_log_cloudwatch" {
 
 data "aws_iam_policy_document" "vpc_flow_log_cloudwatch" {
   count = local.create_flow_log_cloudwatch_iam_role ? 1 : 0
-
   statement {
-    sid = "AWSVPCFlowLogsPushToCloudWatch"
-
+    sid    = "AWSVPCFlowLogsPushToCloudWatch"
     effect = "Allow"
-
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
       "logs:DescribeLogGroups",
       "logs:DescribeLogStreams",
     ]
-
     resources = ["*"]
   }
 }
