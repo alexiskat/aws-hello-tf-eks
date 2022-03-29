@@ -20,5 +20,5 @@ module "dynamodb_terraform_state_lock" {
   server_side_encryption_enabled     = var.server_side_encryption_enabled
   billing_mode                       = "PROVISIONED"
   tags                               = var.tags
-  server_side_encryption_kms_key_arn = module.kms_key.alias_name
+  server_side_encryption_kms_key_arn = module.kms_key.key_arn
 }

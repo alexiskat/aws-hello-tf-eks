@@ -57,6 +57,8 @@ jobs:
         uses: bridgecrewio/checkov-action@master
         with:
           directory: ${{ env.TF_ROOT_PATH }}
+          # CKV_AWS_143: dont set S3 lock. In Dev only to allow deleteion of S3 buckets
+          skip_check: CKV_AWS_143
           framework: terraform 
 # Use for PR only      
 #      - name: Terraform Security Scan
