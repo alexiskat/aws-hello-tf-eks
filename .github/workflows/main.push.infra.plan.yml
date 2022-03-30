@@ -25,9 +25,9 @@ env:
 jobs:
   Terraform-Checks:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ env.TF_ROOT_PATH }}
+#    defaults:
+#      run:
+#        working-directory: ${{ env.TF_ROOT_PATH }}
 
     steps:
       - name: Git Checkout source code
@@ -58,7 +58,7 @@ jobs:
       
       - name: Terraform Init
         run: |
-          terraform fmt -diff -check -recursive
+          terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
         working-directory: ${{ env.TF_ENTRY_POINT_PATH }}
       
