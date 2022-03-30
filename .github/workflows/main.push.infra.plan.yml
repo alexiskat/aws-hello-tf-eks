@@ -48,7 +48,7 @@ jobs:
       - name: Set the value
         id: step_one
         run: |
-          echo "TF_ENTRY_POINT_PATH=${{ format('/infra/tf/01-composition/{0}/{1}', env.AWS_REGION, env.ENV_NAME) }}" >> $GITHUB_ENV
+          echo "TF_ENTRY_POINT_PATH=${{ format('infra/tf/01-composition/{0}/{1}', env.AWS_REGION, env.ENV_NAME) }}" >> $GITHUB_ENV
 
       - name: Check Terraform fmt
         run: |
