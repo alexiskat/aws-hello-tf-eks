@@ -58,7 +58,7 @@ jobs:
       
       - name: Terraform Init
         run: |
-          terraform init -input=false -backend=true -backend-config="backend.tfvars"
+          terraform fmt -diff -check -recursive
         shell: bash
         working-directory: ${{ env.TF_ENTRY_POINT_PATH }}
       
