@@ -30,7 +30,7 @@ jobs:
         working-directory: ${{ env.TF_ROOT_PATH }}
 
     steps:
-      - name: Git Checkout
+      - name: Git Checkout source code
         uses: actions/checkout@v2
 
       - name: Configure aws credentials
@@ -56,13 +56,15 @@ jobs:
         name: Cache plugin dir
         with:
           path: ~/.tflint.d/plugins
-          key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+          key: ubuntu-latest-tflint-${{ hashFiles('.tflint.hcl') }}
       
       - uses: terraform-linters/setup-tflint@v1
         name: Setup TFLint
         with:
           tflint_version: latest
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Init TFLint
+        run: tflint --init
       
       - name: Run static tests on terraform code
         run: tflint -f compact
