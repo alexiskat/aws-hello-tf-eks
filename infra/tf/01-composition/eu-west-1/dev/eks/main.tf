@@ -1,7 +1,7 @@
 # terraform init -backend-config=backend.config
 
 module "eks-vpc" {
-  source = "../../../../02-Module/eks-vpc" # using infra module VPC which acts like a facade to many sub-resources
+  source = "../../../../02-module/eks-vpc" # using infra module VPC which acts like a facade to many sub-resources
   #  ## DynamoDB ##
   #  read_capacity                  = var.read_capacity
   #  write_capacity                 = var.write_capacity
