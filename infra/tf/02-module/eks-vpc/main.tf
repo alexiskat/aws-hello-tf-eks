@@ -42,6 +42,19 @@ module "eks-vpc" {
   enable_dns_support   = var.enable_dns_support
 
   ## Common tag metadata ##
-  #app_name = var.application_name
-  tags = var.tags
+  tags = merge(
+    var.tags,
+    {
+      "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    }
+  )
+  public_subnet_tags = {
+    "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
+  }
 }

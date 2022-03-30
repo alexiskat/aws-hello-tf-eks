@@ -100,6 +100,11 @@ variable "single_nat_gateway" {
   default     = false
 }
 
+variable "eks_cluster_name" {
+  description = "The EKS cluster name"
+  type        = string
+}
+
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)

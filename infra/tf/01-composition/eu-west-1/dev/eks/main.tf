@@ -1,6 +1,6 @@
 # terraform init -backend-config=backend.config
 
-module "eks-vpc" {
+module "create-vpc" {
   source = "../../../../02-module/eks-vpc" # using infra module VPC which acts like a facade to many sub-resources
   #  ## DynamoDB ##
   #  read_capacity                  = var.read_capacity
@@ -22,8 +22,8 @@ module "eks-vpc" {
   enable_dns_hostnames = var.enable_dns_hostnames
   enable_dns_support   = var.enable_dns_support
 
-  ## Common tag metadata ##
-  #app_name = var.application_name
+  eks_cluster_name = local.eks_cluster_name
+  ## Common tag metadata ##  
   env    = var.env
   tags   = local.tags
   region = var.region

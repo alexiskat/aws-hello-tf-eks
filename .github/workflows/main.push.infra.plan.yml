@@ -75,7 +75,7 @@ jobs:
           tflint --init --config ~/work/aws-hello-tf-eks/aws-hello-tf-eks/${{ env.TFLINT_CONFIG_FILE }}
         shell: bash
 
-      - name: Run static tests on 01-composition ONLY
+      - name: Run static tests on 01-composition ONLY # TODO: Only check in that module. Not recursive 
         run: |
           tflint -f compact --config ~/work/aws-hello-tf-eks/aws-hello-tf-eks/${{ env.TFLINT_CONFIG_FILE }}
         shell: bash
