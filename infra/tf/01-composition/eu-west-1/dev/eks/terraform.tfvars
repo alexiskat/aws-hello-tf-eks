@@ -10,7 +10,7 @@ app_name         = "tf-hello-eks-demo"
 ## VPC
 ########################################
 name = "eks-hello-vpc"
-cidr = "999.11.0.0/16"
+cidr = "10.11.0.0/16"
 
 azs              = ["eu-west-1a", "eu-west-1b", "eu-west-1v"]
 private_subnets  = ["10.11.1.0/24", "10.11.2.0/24", "10.11.3.0/24"]
