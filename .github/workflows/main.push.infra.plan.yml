@@ -52,16 +52,13 @@ jobs:
         shell: bash
         working-directory: ${{ env.TF_ROOT_PATH }}
       
-      - uses: actions/cache@v2
-        name: Cache plugin dir
-        with:
-          path: ~/.tflint.d/plugins
-          key: ubuntu-latest-tflint-${{ hashFiles('.tflint.hcl') }}
-      
       - uses: terraform-linters/setup-tflint@v1
         name: Setup TFLint
         with:
           tflint_version: latest
+
+      - name: Show version
+        run: tflint --version
 
       - name: Init TFLint
         run: tflint --init
