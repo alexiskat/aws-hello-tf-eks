@@ -52,14 +52,14 @@ jobs:
         shell: bash
         working-directory: ${{ env.TF_ROOT_PATH }}
       
-      - name: Test with Checkov
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: ${{ env.TF_ROOT_PATH }}
-          # CKV_AWS_143: dont set S3 lock. In Dev only to allow deleteion of S3 buckets
-          skip_check: CKV_AWS_143
-          framework: terraform 
+#      - name: Test with Checkov
+#        id: checkov
+#        uses: bridgecrewio/checkov-action@master
+#        with:
+#          directory: ${{ env.TF_ROOT_PATH }}
+#          # CKV_AWS_143: dont set S3 lock. In Dev only to allow deleteion of S3 buckets
+#          skip_check: CKV_AWS_143
+#          framework: terraform 
 # Use for PR only      
 #      - name: Terraform Security Scan
 #        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
@@ -68,26 +68,19 @@ jobs:
 
       - name: Terraform Init
         run: |
-          terraform init -input=false -backend=true -backend-config="env/${{ env.ENV_NAME }}/backend.tfvars"
+          terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ format('{0}/{1}/{2}', env.TF_ENTRY_POINT_PATH, env.AWS_REGION, env.ENV_NAME) }}
 
       - name: Terraform Validate
         run: |
           terraform validate
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ format('{0}/{1}/{2}', env.TF_ENTRY_POINT_PATH, env.AWS_REGION, env.ENV_NAME) }}
         shell: bash
 
       - name: Terraform Plan
         if: ${{ github.ref == 'refs/tags/dev-infra-plan' }}
         run: |
-          terraform plan -input=false -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
+          terraform plan -input=false -var-file="terraform.tfvars"
         shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
-
-      - name: Terraform Apply
-        if: ${{ github.ref == 'refs/tags/dev-infra-apply' }}
-        run: |
-          terraform apply -input=false -auto-approve -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
-        shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ format('{0}/{1}/{2}', env.TF_ENTRY_POINT_PATH, env.AWS_REGION, env.ENV_NAME) }}
