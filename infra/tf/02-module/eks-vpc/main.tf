@@ -42,5 +42,5 @@ module "eks-vpc" {
 
   ## Common tag metadata ##
   #app_name = var.application_name
-  tags   = var.tags
+  tags = var.tags
 }
