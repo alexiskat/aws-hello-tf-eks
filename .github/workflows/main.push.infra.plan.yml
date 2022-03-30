@@ -17,8 +17,8 @@ permissions:
   contents: read # required to checkout the code from the repo
 
 env:
-  TF_ROOT_PATH: ./infra/tf/
-  TF_ENTRY_POINT_PATH: ./infra/tf/01-composition
+  TF_ROOT_PATH: ~/infra/tf/
+  TF_ENTRY_POINT_PATH: ~/infra/tf/01-composition
   ENV_NAME: dev
   AWS_REGION: eu-west-1
 
