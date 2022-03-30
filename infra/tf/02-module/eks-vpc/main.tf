@@ -44,4 +44,3 @@ module "eks-vpc" {
   #app_name = var.application_name
   tags = var.tags
 }
-

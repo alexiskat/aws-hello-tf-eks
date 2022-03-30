@@ -74,6 +74,9 @@ jobs:
 
       - name: Init TFLint
         run: |
+          cd ~
+          pwd
+          ls
           tflint --init --config ${{ env.TFLINT_CONFIG_FILE }}
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
       
