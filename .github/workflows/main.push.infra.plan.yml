@@ -19,7 +19,7 @@ permissions:
 env:
   ENV_NAME: dev
   AWS_REGION: eu-west-1
-  TF_ROOT_PATH: /infra/tf/
+  TF_ROOT_PATH: infra/tf/
 
 jobs:
   Terraform-Checks:
