@@ -23,6 +23,7 @@ single_nat_gateway = true #set this to false for prod
 enable_dns_hostnames = true
 enable_dns_support   = true
 
+
 ########################################
 ## DynamoDB
 ########################################
