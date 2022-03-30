@@ -12,7 +12,7 @@ app_name         = "tf-hello-eks-demo"
 name = "eks-hello-vpc"
 cidr = "999.11.0.0/16"
 
-azs              = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+azs              = ["eu-west-1a", "eu-west-1b", "eu-west-1v"]
 private_subnets  = ["10.11.1.0/24", "10.11.2.0/24", "10.11.3.0/24"]
 public_subnets   = ["10.11.101.0/24", "10.11.102.0/24", "10.11.103.0/24"]
 database_subnets = ["10.11.201.0/24", "10.11.202.0/24", "10.11.203.0/24"]
