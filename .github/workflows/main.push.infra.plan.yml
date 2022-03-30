@@ -55,6 +55,12 @@ jobs:
         shell: bash
         working-directory: ${{ env.TF_ROOT_PATH }}
       
+      - name: Terraform Init
+        run: |
+          terraform init -input=false -backend=true -backend-config="backend.tfvars"
+        shell: bash
+        working-directory: ${{ env.TF_ENTRY_POINT_PATH }}
+      
       - uses: terraform-linters/setup-tflint@v1
         name: Setup TFLint
         with:
@@ -81,14 +87,6 @@ jobs:
 #        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
 #        with:
 #          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Terraform Init
-        run: |
-          echo "TF_ENTRY_POINT_PATH: ${{ env.TF_ENTRY_POINT_PATH }}"
-          echo "working-directory  : ${{ env.working-directory }}"
-          echo "env  : ${{ env }}"
-          terraform init -input=false -backend=true -backend-config="backend.tfvars"
-        shell: bash
-        working-directory: ${{ env.TF_ENTRY_POINT_PATH }}
 
       - name: Terraform Validate
         run: |
