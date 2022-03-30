@@ -60,6 +60,8 @@ jobs:
       
       - name: Terraform Init
         run: |
+          pwd
+          ls -al
           terraform init -input=false -backend=true -backend-config="backend.config"
         shell: bash
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
