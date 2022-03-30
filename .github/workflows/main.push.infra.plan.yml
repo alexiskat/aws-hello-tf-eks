@@ -77,7 +77,7 @@ jobs:
           cd ~
           pwd
           ls
-          tflint --init --config ${{ env.TFLINT_CONFIG_FILE }}
+          tflint --init --config ~/work/aws-hello-tf-eks/aws-hello-tf-eks/${{ env.TFLINT_CONFIG_FILE }}
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
       
       - name: Run static tests on --config terraform code
