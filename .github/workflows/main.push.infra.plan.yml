@@ -48,6 +48,9 @@ jobs:
       - name: Set Terraform Entry Point variable
         run: |
           echo "TF_EKS_ENTRY_POINT=${{ format('infra/tf/01-composition/{0}/{1}/eks', env.AWS_REGION, env.ENV_NAME) }}" >> $GITHUB_ENV
+          pwd
+          ls -al
+          ls -al 02-module
 
       - name: Check Terraform fmt
         run: |
