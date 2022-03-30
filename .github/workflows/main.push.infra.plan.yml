@@ -85,7 +85,7 @@ jobs:
 
       - name: Terraform Init
         run: |
-          echo "TF_ENTRY_POINT_PATH: $env.TF_ENTRY_POINT_PATH"
+          echo "TF_ENTRY_POINT_PATH: $TF_ENTRY_POINT_PATH"
           terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
         working-directory: ${{ format('{0}/{1}/{2}', env.TF_ENTRY_POINT_PATH, env.AWS_REGION, env.ENV_NAME) }}
