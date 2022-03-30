@@ -65,20 +65,21 @@ jobs:
           terraform init -input=false -backend=true -backend-config="backend.config"
         shell: bash
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
-      
+            
       - uses: terraform-linters/setup-tflint@v1
         name: Setup TFLint
         with:
           tflint_version: latest
 
-      - name: Show version
-        run: tflint --version
-
       - name: Init TFLint
-        run: tflint --init
+        run: |
+          tflint --init
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
       
       - name: Run static tests on terraform code
-        run: tflint -f compact
+        run: |
+          tflint -f compact
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
 #      - name: Test with Checkov
 #        id: checkov
 #        uses: bridgecrewio/checkov-action@master
@@ -96,7 +97,7 @@ jobs:
       - name: Terraform Validate
         run: |
           terraform validate
-        working-directory: ${{ format('{0}/{1}/{2}', env.TF_ENTRY_POINT_PATH, env.AWS_REGION, env.ENV_NAME) }}
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
         shell: bash
 
       - name: Terraform Plan
@@ -104,4 +105,4 @@ jobs:
         run: |
           terraform plan -input=false -var-file="terraform.tfvars"
         shell: bash
-        working-directory: ${{ format('{0}/{1}/{2}', env.TF_ENTRY_POINT_PATH, env.AWS_REGION, env.ENV_NAME) }}
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
