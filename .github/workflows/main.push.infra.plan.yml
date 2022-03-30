@@ -61,8 +61,6 @@ jobs:
       
       - name: Terraform Init
         run: |
-          pwd
-          ls -al
           terraform init -input=false -backend=true -backend-config="backend.config"
         shell: bash
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
@@ -74,16 +72,13 @@ jobs:
 
       - name: Init TFLint
         run: |
-          cd ~
-          pwd
-          ls
           tflint --init --config ~/work/aws-hello-tf-eks/aws-hello-tf-eks/${{ env.TFLINT_CONFIG_FILE }}
-        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
-      
-      - name: Run static tests on --config terraform code
+        shell: bash
+
+      - name: Run static tests on 01-composition ONLY
         run: |
-          ls -al
-          tflint -f compact --module --config ${{ env.TFLINT_CONFIG_FILE }}
+          tflint -f compact --config ~/work/aws-hello-tf-eks/aws-hello-tf-eks/${{ env.TFLINT_CONFIG_FILE }}
+        shell: bash
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
 #      - name: Test with Checkov
 #        id: checkov
@@ -106,7 +101,7 @@ jobs:
         shell: bash
 
       - name: Terraform Plan
-        if: ${{ github.ref == 'refs/tags/dev-infra-plan' }}
+        #if: ${{ github.ref == 'refs/tags/dev-infra-plan' }}
         run: |
           terraform plan -input=false -var-file="terraform.tfvars"
         shell: bash
