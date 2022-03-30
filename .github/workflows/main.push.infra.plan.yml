@@ -18,7 +18,7 @@ permissions:
 
 env:
   ENV_NAME: dev
-  AWS_REGION: eu-west-1
+  AWS_REGION: eu-west-01
   TF_ROOT_PATH: infra/tf/
 
 jobs:
@@ -47,7 +47,7 @@ jobs:
       
       - name: Set Terraform Entry Point variable
         run: |
-          echo "TF_ENTRY_POINT_PATH=${{ format('infra/tf/01-composition/{0}/{1}/eks', env.AWS_REGION, env.ENV_NAME) }}" >> $GITHUB_ENV
+          echo "TF_EKS_ENTRY_POINT=${{ format('infra/tf/01-composition/{0}/{1}/eks', env.AWS_REGION, env.ENV_NAME) }}" >> $GITHUB_ENV
 
       - name: Check Terraform fmt
         run: |
@@ -59,7 +59,7 @@ jobs:
         run: |
           terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
-        working-directory: ${{ env.TF_ENTRY_POINT_PATH }}
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
       
       - uses: terraform-linters/setup-tflint@v1
         name: Setup TFLint
