@@ -20,6 +20,7 @@ env:
   ENV_NAME: dev
   AWS_REGION: eu-west-1
   TF_ROOT_PATH: infra/tf/
+  TFLINT_CONFIG_FILE : infra/utils/.tflint.hcl
 
 jobs:
   Terraform-Checks:
@@ -73,13 +74,13 @@ jobs:
 
       - name: Init TFLint
         run: |
-          tflint --init
+          tflint --init --config ${{ env.TFLINT_CONFIG_FILE }}
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
       
-      - name: Run static tests on terraform code
+      - name: Run static tests on --config terraform code
         run: |
           ls -al
-          tflint -f compact --module .
+          tflint -f compact --module --config ${{ env.TFLINT_CONFIG_FILE }}
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
 #      - name: Test with Checkov
 #        id: checkov
