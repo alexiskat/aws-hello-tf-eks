@@ -45,7 +45,7 @@ module "eks-vpc" {
   tags = merge(
     var.tags,
     {
-      "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     }
   )
   public_subnet_tags = {
