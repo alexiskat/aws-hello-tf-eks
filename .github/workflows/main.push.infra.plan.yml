@@ -20,7 +20,6 @@ env:
   ENV_NAME: dev
   AWS_REGION: eu-west-1
   TF_ROOT_PATH: /infra/tf/
-  TF_ENTRY_POINT_PATH: ${{ format('/infra/tf/01-composition/{0}/{1}', AWS_REGION, ENV_NAME) }}
 
 jobs:
   Terraform-Checks:
@@ -45,6 +44,11 @@ jobs:
         with:
           terraform_version: 1.1.7
           terraform_wrapper: false
+      
+      - name: Set the value
+        id: step_one
+        run: |
+          echo "TF_ENTRY_POINT_PATH=${{ format('/infra/tf/01-composition/{0}/{1}', AWS_REGION, ENV_NAME) }}" >> $GITHUB_ENV
 
       - name: Check Terraform fmt
         run: |
@@ -85,7 +89,7 @@ jobs:
           echo "env  : ${{ env }}"
           terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
-        working-directory: 
+        working-directory: ${{ env.TF_ENTRY_POINT_PATH }}
 
       - name: Terraform Validate
         run: |
