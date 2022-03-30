@@ -68,7 +68,6 @@ jobs:
       
       - name: Run static tests on terraform code
         run: tflint -f compact
-      
 #      - name: Test with Checkov
 #        id: checkov
 #        uses: bridgecrewio/checkov-action@master
@@ -82,10 +81,10 @@ jobs:
 #        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
 #        with:
 #          github_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Terraform Init
         run: |
-          echo "TF_ENTRY_POINT_PATH: $TF_ENTRY_POINT_PATH"
+          echo "TF_ENTRY_POINT_PATH: {{ env.TF_ENTRY_POINT_PATH }}"
+          echo "working-directory  : {{ env.working-directory }}"
           terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
         working-directory: ${{ format('{0}/{1}/{2}', env.TF_ENTRY_POINT_PATH, env.AWS_REGION, env.ENV_NAME) }}
