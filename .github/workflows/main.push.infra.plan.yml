@@ -20,7 +20,7 @@ env:
   ENV_NAME: dev
   AWS_REGION: eu-west-1
   TF_ROOT_PATH: infra/tf/
-  TF_ENTRY_POINT_PATH:  infra/tf/eu-west-1/dev/
+  TF_ENTRY_POINT_PATH: infra/tf/eu-west-1/dev/
 
 jobs:
   Terraform-Checks:
