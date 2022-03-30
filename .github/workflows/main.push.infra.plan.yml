@@ -78,7 +78,8 @@ jobs:
       
       - name: Run static tests on terraform code
         run: |
-          tflint -f compact --module
+          ls -al
+          tflint -f compact --module .
         working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
 #      - name: Test with Checkov
 #        id: checkov
