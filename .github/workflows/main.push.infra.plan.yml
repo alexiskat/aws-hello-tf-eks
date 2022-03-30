@@ -20,7 +20,7 @@ env:
   ENV_NAME: dev
   AWS_REGION: eu-west-1
   TF_ROOT_PATH: /infra/tf/
-  TF_ENTRY_POINT_PATH: ${{ format('/infra/tf/01-composition/{0}/{1}', env.AWS_REGION, env.ENV_NAME) }}
+  TF_ENTRY_POINT_PATH: ${{ format('/infra/tf/01-composition/{0}/{1}', AWS_REGION, ENV_NAME) }}
 
 jobs:
   Terraform-Checks:
