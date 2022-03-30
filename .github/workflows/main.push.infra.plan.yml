@@ -58,7 +58,9 @@ jobs:
       
       - name: Terraform Init
         run: |
-          cd ${{ env.TF_ENTRY_POINT_PATH }}
+          pwd
+          ls -al
+          
           terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
       
