@@ -58,9 +58,9 @@ jobs:
       
       - name: Terraform Init
         run: |
+          cd ${{ env.TF_ENTRY_POINT_PATH }}
           terraform init -input=false -backend=true -backend-config="backend.tfvars"
         shell: bash
-        working-directory: ${{ env.TF_ENTRY_POINT_PATH }}
       
       - uses: terraform-linters/setup-tflint@v1
         name: Setup TFLint
