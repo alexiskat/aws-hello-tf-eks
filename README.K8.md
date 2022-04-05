@@ -1,11 +1,6 @@
 # Introduction
-This repo can be used to deploy a  ```hello world``` to AWS EKS using terraform.
-
-aws eks describe-cluster --name CLUSTER-NAME --query cluster.resourcesVpcConfig.clusterSecurityGroupId
-aws eks describe-cluster --name CLUSTER-NAME --query cluster.resourcesVpcConfig.securityGroupIds
-
-## AWS EKS/K8s
-### Connect kubeconfig to AWS EKS with aws-vault
+This readme is only for the AWS EKS/K8 setup
+## Connect kubeconfig to AWS EKS with aws-vault
 Clean up and check you have everything setup
 ```
 which aws-iam-authenticator
@@ -73,7 +68,7 @@ kubectl get svc
 kubectl -n kube-system describe configmap aws-auth
 kubectl -n kube-system get configmap aws-auth -o yaml
 ```
-### Setup RBAC to allow IAM role/User access to K8 Cluster
+### Setup RBAC to allow SSO IAM Role/User access to K8 Cluster
 Error: "Your current user or role does not have access to Kubernetes objects on this EKS cluster"
 Download the AWS provided ClusterRole and ClusterRoleBinding configuration ```curl -o eks-console-full-access.yaml https://amazon-eks.s3.us-west-2.amazonaws.com/docs/eks-console-full-access.yaml```
 Create the role and bindings by applying them to the cluster ```kubectl apply -f eks-console-full-access.yaml```
