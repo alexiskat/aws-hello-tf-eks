@@ -24,7 +24,8 @@ module "create-vpc" {
 
   eks_cluster_name = local.eks_cluster_name
   ## Common tag metadata ##  
-  env    = var.env
-  tags   = local.tags
-  region = var.region
+  app_code = var.app_code
+  env      = var.env
+  tags     = local.tags
+  region   = var.region
 }

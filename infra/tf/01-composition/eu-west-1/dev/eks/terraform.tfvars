@@ -1,10 +1,10 @@
 ########################################
 # Environment setting
 ########################################
-region           = "eu-west-1"
-env              = "dev"
-application_name = "tf-hello-eks-demo"
-app_name         = "tf-hello-eks-demo"
+region   = "eu-west-1"
+env      = "dev"
+app_name = "tf-hello-eks-demo"
+app_code = "eks-demo"
 
 ########################################
 ## VPC

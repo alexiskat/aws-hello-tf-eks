@@ -10,6 +10,10 @@ variable "region" {
   description = "The AWS region this bucket should reside in."
   type        = string
 }
+variable "app_code" {
+  description = "A short hand of tha application."
+  type        = string
+}
 
 ########################################
 ## DynamoDB

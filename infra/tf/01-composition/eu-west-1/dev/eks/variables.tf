@@ -11,13 +11,13 @@ variable "region" {
   type = string
 }
 
-variable "application_name" {
+variable "app_name" {
   description = "The name of the application."
   type        = string
 }
 
-variable "app_name" {
-  description = "The name of the application."
+variable "app_code" {
+  description = "Short hand code for the application."
   type        = string
 }
 
