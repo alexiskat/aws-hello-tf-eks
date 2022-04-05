@@ -2,11 +2,13 @@ name: awsorg.branch.push
 
 on:
   push:
+    #Both branches/branches-ignore and paths will only run when both filters are satisfied.
     branches-ignore:    
       # Push event on feature branch only
       - main
+    # Path filters are not evaluated for pushes of tags
     paths:
-      - infra/aws-acc-org**
+      - infra/aws-acc-org/**
 
 permissions:
   id-token: write # required to use OIDC authentication

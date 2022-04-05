@@ -1,6 +1,9 @@
 # Introduction
 This repo can be used to deploy a  ```hello world``` to AWS EKS using terraform.
 
+### Setup AWs Accounts with GH Actions 
+https://benoitboure.com/securely-access-your-aws-resources-from-github-actions
+
 # PreRequisites 
  [aws-vault](https://github.com/99designs/aws-vault) must be installed on your local machine and a ```user``` must be configured for each environment you plan to deploy to ```dev|qa|prod```.
  [docker](https://docs.docker.com/get-docker/) must also be installed on the local machine
@@ -9,14 +12,17 @@ This repo can be used to deploy a  ```hello world``` to AWS EKS using terraform.
 # AWS-Vault
 ### Basic CMD
 ```sh
-aws-vault add weebaws
+aws-vault add alexis-mng
 aws-vault list
-aws-vault exec weebaws -- env | grep AWS
+aws-vault exec alexis-mng -- env | grep AWS
+aws-vault clear alexis-mng
+aws-vault remove alexis-mng --sessions-only
 ```
 Remeber the user default setting like region still need to be configure at ```vi ~/.aws/config```
 ```
-[profile weebaws]
+[profile alexis-mng]
 region=eu-west-1
+mfa_serial=arn:aws:iam::xxx:mfa/alexis-mng
 ```
 # Docker
 ### Get the Hashicorp Docker Image
@@ -38,21 +44,49 @@ Use the following to check this: ```docker run -v `pwd`:/workspace -w /workspace
 Thanks to Victor Leong blog [artical](https://www.vic-l.com/terraform-with-docker) for the above
 
 # Terraform
+### TF Ddebuging Env levels
+```
+export TF_LOG=DEBUG
+export TF_LOG=ERROR
+export TF_LOG=INFO
+export TF_LOG=WARN
+export TF_LOG=TRACE
+```
 ### Terraform, Docker and aws-vault
 All the envirement variable created by aws-vault need to be passed onto docker and then run the terraform cmd
 ```sh
-aws-vault exec weebaws -- docker run -i -t \
-	-e AWS_VAULT \
-	-e AWS_ACCESS_KEY_ID  \
-	-e AWS_SECRET_ACCESS_KEY  \
-	-e AWS_SESSION_TOKEN  \
-	-e AWS_SECURITY_TOKEN  \
-	-e AWS_SESSION_EXPIRATION  \
-	-e AWS_REGION \
-	-e TF_LOG=INFO  \
-	-v `pwd`:/workspace -w /workspace \
-	hashicorp/terraform:light init -backend=true -backend-config=backend.tfvars
+aws-vault exec bigbaw -- docker run --rm -it \
+        -e AWS_VAULT \
+        -e AWS_ACCESS_KEY_ID  \
+        -e AWS_SECRET_ACCESS_KEY  \
+        -e AWS_SESSION_TOKEN  \
+        -e AWS_SECURITY_TOKEN  \
+        -e AWS_SESSION_EXPIRATION  \
+        -e AWS_REGION \
+        -v `pwd`:/root -w /root \
+        -v ~/.kube:/root/.kube \
+        -v ~/.aws:/root/.aws \
+        alexiskats/aws-k8s "terraform init -backend=true -backend-config=env/dev/backend.tfvars"
+
+aws-vault exec bigbaw -- docker run --rm -it \
+        -e AWS_VAULT \
+        -e AWS_ACCESS_KEY_ID  \
+        -e AWS_SECRET_ACCESS_KEY  \
+        -e AWS_SESSION_TOKEN  \
+        -e AWS_SECURITY_TOKEN  \
+        -e AWS_SESSION_EXPIRATION  \
+        -e AWS_REGION \
+        -v `pwd`:/root -w /root \
+        -v ~/.kube:/root/.kube \
+        -v ~/.aws:/root/.aws \
+        alexiskats/aws-k8s "terraform apply -var-file=env/dev/terraform.tfvars"
 ```
+--profile
+aws-vault exec alexis-mng -- org-formation init organization.yml --region eu-west-1
+aws-vault exec alexis-mng -- org-formation perform-tasks ./organization-tasks.yml --state-bucket-name organization-formation-339638031741 --state-object state.json
+AWS_PROFILE=alexis-mng
+aws-vault exec alexis-mng -- org-formation perform-tasks ./organization-tasks.yml
+
 ## Docker
 ### Running
 ```
@@ -68,17 +102,20 @@ docker rmi -f 270d5ba2c890
 docker rmi $(docker images -a -q)
 ```
 ## AWS CLI
+```
+aws-vault exec bigbaw -- docker run --rm -it \
+	-e AWS_ACCESS_KEY_ID  \
+	-e AWS_SECRET_ACCESS_KEY  \
+	-e AWS_SESSION_TOKEN  \
+	-e AWS_REGION \
+	amazon/aws-cli eks list-clusters
+```
 
-# Running Terraform from dev laptop
 ```
-docker run -i -t hashicorp/terraform:latest plan
-```
-
-### TF Ddebuging Env levels
-```
-export TF_LOG=DEBUG
-export TF_LOG=ERROR
-export TF_LOG=INFO
-export TF_LOG=WARN
-export TF_LOG=TRACE
+aws-vault exec alexis-mng -- docker run --rm -it \
+	-e AWS_ACCESS_KEY_ID  \
+	-e AWS_SECRET_ACCESS_KEY  \
+	-e AWS_SESSION_TOKEN  \
+	-e AWS_REGION \
+	amazon/aws-cli sts get-caller-identity
 ```

@@ -1,86 +1,108 @@
-name: main-push-infra
+name: infra.branch.push
 
 on:
   push:
-    branches:    
-      # Push events on main branch
+    #Both branches/branches-ignore and paths will only run when both filters are satisfied.
+    branches-ignore:    
+      # Push event on feature branch only
       - main
-    tags:
-      - "dev-infra-plan"
-      - "dev-infra-apply"
+    # Path filters are not evaluated for pushes of tags
+    paths:
+      - infra/tf/**
+#    tags:
+#      - "dev-infra-plan"
+#      - "dev-infra-apply"
+permissions:
+  id-token: write # required to use OIDC authentication
+  contents: read # required to checkout the code from the repo
 
 env:
-  TF_MODULE_PATH: infra
   ENV_NAME: dev
+  AWS_REGION: eu-west-1
+  TF_ROOT_PATH: infra/tf/
+  TFLINT_CONFIG_FILE : infra/utils/.tflint.hcl
 
 jobs:
-  ps-tf-data:
+  Terraform-Checks:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_ROOT_PATH }}
 
     steps:
-      - name: Git Checkout
+      - name: Git Checkout source code
         uses: actions/checkout@v2
 
-      - name: Configure AWS Credentials
+      - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.DEV_AWS_TFA_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEV_AWS_TFA_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          role-to-assume: ${{ secrets.AWS_DEV_ROLE_ARN_TF_GH_ACTIONS }}
+          role-duration-seconds: 900 # the ttl of the session, in seconds.
+          aws-region: ${{ env.AWS_REGION }}
 
-      - name: Configure Terraform v0.15.4
-        uses: hashicorp/setup-terraform@v1
+      - name: Configure Terraform v1.1.7
+        uses: hashicorp/setup-terraform@v1.3.2
         with:
-          terraform_version: 0.15.4
+          terraform_version: 1.1.7
           terraform_wrapper: false
+      
+      - name: Set Terraform Entry Point variable
+        run: |
+          echo "TF_EKS_ENTRY_POINT=${{ format('infra/tf/01-composition/{0}/{1}/eks', env.AWS_REGION, env.ENV_NAME) }}" >> $GITHUB_ENV
+          pwd
+          ls -al
+          ls -al 02-module
 
       - name: Check Terraform fmt
         run: |
           terraform fmt -diff -check -recursive
         shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
-
-      - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v1
-        with:
-          tflint_version: latest
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run TFLint
-        run: |
-          tflint --version
-          tflint -f compact
-        working-directory: ${{ env.TF_MODULE_PATH }}
-
+        working-directory: ${{ env.TF_ROOT_PATH }}
+      
       - name: Terraform Init
         run: |
-          terraform init -input=false -backend=true -backend-config="env/${{ env.ENV_NAME }}/backend.tfvars"
+          terraform init -input=false -backend=true -backend-config="backend.config"
         shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
+            
+      - uses: terraform-linters/setup-tflint@v1
+        name: Setup TFLint
+        with:
+          tflint_version: latest
+
+      - name: Init TFLint
+        run: |
+          tflint --init --config ~/work/aws-hello-tf-eks/aws-hello-tf-eks/${{ env.TFLINT_CONFIG_FILE }}
+        shell: bash
+
+      - name: Run static tests on 01-composition ONLY # TODO: Only check in that module. Not recursive 
+        run: |
+          tflint -f compact --config ~/work/aws-hello-tf-eks/aws-hello-tf-eks/${{ env.TFLINT_CONFIG_FILE }}
+        shell: bash
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
+#      - name: Test with Checkov
+#        id: checkov
+#        uses: bridgecrewio/checkov-action@master
+#        with:
+#          directory: ${{ env.TF_ROOT_PATH }}
+#          # CKV_AWS_143: dont set S3 lock. In Dev only to allow deleteion of S3 buckets
+#          skip_check: CKV_AWS_143
+#          framework: terraform 
+# Use for PR only      
+#      - name: Terraform Security Scan
+#        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terraform Validate
         run: |
           terraform validate
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
         shell: bash
 
       - name: Terraform Plan
-        if: ${{ github.ref == 'refs/tags/dev-infra-plan' }}
+        #if: ${{ github.ref == 'refs/tags/dev-infra-plan' }}
         run: |
-          terraform plan -input=false -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
+          terraform plan -input=false -var-file="terraform.tfvars"
         shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
-
-      - name: Terraform Security Scan
-        uses: triat/terraform-security-scan@v3.0.0
-        with:
-          tfsec_actions_working_dir: ${{ env.TF_MODULE_PATH }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Terraform Apply
-        if: ${{ github.ref == 'refs/tags/dev-infra-apply' }}
-        run: |
-          terraform apply -input=false -auto-approve -var-file="env/${{ env.ENV_NAME }}/terraform.tfvars"
-        shell: bash
-        working-directory: ${{ env.TF_MODULE_PATH }}
+        working-directory: ${{ env.TF_EKS_ENTRY_POINT }}
