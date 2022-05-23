@@ -14,7 +14,7 @@ on:
 #      - "dev-infra-apply"
 permissions:
   id-token: write # required to use OIDC authentication
-  contents: read # required to checkout the code from the repo
+  contents: read  # required to checkout the code from the repo
 
 env:
   ENV_NAME: dev
