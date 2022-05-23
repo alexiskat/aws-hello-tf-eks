@@ -97,6 +97,7 @@ data:
 NOTE:
 1. Change SSO role from ```arn:aws:iam::123456:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_RANDOM_STRING``` to: ```arn:aws:iam::123456:role/AWSReservedSSO_RANDOM_STRING```
 2. You can find the role ARN been used by SSO by copy and paste the ENV variables for the console found on the SSO login screen into the terminal and then call ```aws sts get-caller-identity```. The AWSReservedSSO_XXX is the SSO role you can copy and paste in the IAM -> Role to get the full details
+
 ### Links
 [Change with ./kube/conf to work with aws-vault](https://github.com/99designs/aws-vault/issues/344) 
 [IAM Role access to cluster](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html) 
