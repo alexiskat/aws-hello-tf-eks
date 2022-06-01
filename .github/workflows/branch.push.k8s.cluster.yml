@@ -37,6 +37,11 @@ jobs:
           role-duration-seconds: 900 # the ttl of the session, in seconds.
           aws-region: ${{ env.AWS_REGION }}
       
+      - name: Set Terraform Entry Point variable
+        run: |
+          pwd
+          ls -al
+
       - name: Update k8s Cluster RBAC roles 
         uses: kodermax/kubectl-aws-eks@master
         env:
