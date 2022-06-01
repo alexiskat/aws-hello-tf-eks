@@ -9,3 +9,8 @@ output "cluster_name" {
   description = "The EKS cluster Name"
   value       = try(aws_eks_cluster.this.name, "")
 }
+
+output "cluster_identity" {
+  description = "Attribute block containing identity provider information for your cluster"
+  value       = try(aws_eks_cluster.this.identity, "")
+}

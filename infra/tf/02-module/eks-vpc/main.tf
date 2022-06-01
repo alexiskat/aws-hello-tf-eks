@@ -265,3 +265,13 @@ module "eks_cluster_sg" {
     },
   ]
 }
+
+module "eks_oidc" {
+  source = "../../03-resource/security/oidc"
+
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.eks-demo-cluster.certificates[0].sha1_fingerprint]
+  url             = module.eks_cluster.cluster_identity.0.oidc.0.issuer
+  tags            = var.tags
+}
+  

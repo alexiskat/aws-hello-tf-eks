@@ -43,51 +43,6 @@ Use the following to check this: ```docker run -v `pwd`:/workspace -w /workspace
 
 Thanks to Victor Leong blog [artical](https://www.vic-l.com/terraform-with-docker) for the above
 
-# Terraform
-### TF Ddebuging Env levels
-```
-export TF_LOG=DEBUG
-export TF_LOG=ERROR
-export TF_LOG=INFO
-export TF_LOG=WARN
-export TF_LOG=TRACE
-```
-### Terraform, Docker and aws-vault
-All the envirement variable created by aws-vault need to be passed onto docker and then run the terraform cmd
-```sh
-aws-vault exec bigbaw -- docker run --rm -it \
-        -e AWS_VAULT \
-        -e AWS_ACCESS_KEY_ID  \
-        -e AWS_SECRET_ACCESS_KEY  \
-        -e AWS_SESSION_TOKEN  \
-        -e AWS_SECURITY_TOKEN  \
-        -e AWS_SESSION_EXPIRATION  \
-        -e AWS_REGION \
-        -v `pwd`:/root -w /root \
-        -v ~/.kube:/root/.kube \
-        -v ~/.aws:/root/.aws \
-        alexiskats/aws-k8s "terraform init -backend=true -backend-config=env/dev/backend.tfvars"
-
-aws-vault exec bigbaw -- docker run --rm -it \
-        -e AWS_VAULT \
-        -e AWS_ACCESS_KEY_ID  \
-        -e AWS_SECRET_ACCESS_KEY  \
-        -e AWS_SESSION_TOKEN  \
-        -e AWS_SECURITY_TOKEN  \
-        -e AWS_SESSION_EXPIRATION  \
-        -e AWS_REGION \
-        -v `pwd`:/root -w /root \
-        -v ~/.kube:/root/.kube \
-        -v ~/.aws:/root/.aws \
-        alexiskats/aws-k8s "terraform apply -var-file=env/dev/terraform.tfvars"
-```
---profile
-aws-vault exec alexis-mng -- org-formation init organization.yml --region eu-west-1
-aws-vault exec alexis-mng -- org-formation perform-tasks ./organization-tasks.yml --state-bucket-name organization-formation-339638031741 --state-object state.json
-AWS_PROFILE=alexis-mng
-aws-vault exec alexis-mng -- org-formation perform-tasks ./organization-tasks.yml
-
-## Docker
 ### Running
 ```
 docker ps
@@ -100,10 +55,44 @@ docker image prune -a
 docker container prune
 docker rmi -f 270d5ba2c890
 docker rmi $(docker images -a -q)
+
+# Terraform
+
+### Tun TF in Dev Account using local created user 'tf'
+```aws-vault exec tf -- terraform init -input=false -backend=true -backend-config="backend.config"
+aws-vault exec tf -- terraform plan -input=false -var-file="terraform.tfvars"
+aws-vault exec tf -- terraform apply -input=false -var-file="terraform.tfvars"```
+
+First time you run it might need to use the --no-session to get IAM roles created. See [artical](https://github.com/99designs/aws-vault/issues/266)
+```aws-vault exec tf --no-session -- terraform apply -input=false -var-file="terraform.tfvars"```
+
+### TF Debuging Env levels
+```
+export TF_LOG=DEBUG
+export TF_LOG=ERROR
+export TF_LOG=INFO
+export TF_LOG=WARN
+export TF_LOG=TRACE
+```
+### Terraform, Docker and aws-vault
+All the envirement variable created by aws-vault need to be passed onto docker and then run the terraform cmd
+```sh
+aws-vault exec alexis-mng -- docker run --rm -it \
+        -e AWS_VAULT \
+        -e AWS_ACCESS_KEY_ID  \
+        -e AWS_SECRET_ACCESS_KEY  \
+        -e AWS_SESSION_TOKEN  \
+        -e AWS_SECURITY_TOKEN  \
+        -e AWS_SESSION_EXPIRATION  \
+        -e AWS_REGION \
+        -v `pwd`:/root -w /root \
+        -v ~/.kube:/root/.kube \
+        -v ~/.aws:/root/.aws \
+        alexiskats/aws-k8s "terraform init -backend=true -backend-config=env/dev/backend.tfvars"
 ```
 ## AWS CLI
 ```
-aws-vault exec bigbaw -- docker run --rm -it \
+aws-vault exec tf -- docker run --rm -it \
 	-e AWS_ACCESS_KEY_ID  \
 	-e AWS_SECRET_ACCESS_KEY  \
 	-e AWS_SESSION_TOKEN  \
@@ -112,7 +101,7 @@ aws-vault exec bigbaw -- docker run --rm -it \
 ```
 
 ```
-aws-vault exec alexis-mng -- docker run --rm -it \
+aws-vault exec tf -- docker run --rm -it \
 	-e AWS_ACCESS_KEY_ID  \
 	-e AWS_SECRET_ACCESS_KEY  \
 	-e AWS_SESSION_TOKEN  \
