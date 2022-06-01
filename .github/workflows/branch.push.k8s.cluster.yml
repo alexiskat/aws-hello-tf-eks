@@ -8,7 +8,7 @@ on:
       - main
     # Path filters are not evaluated for pushes of tags
     paths:
-      - eks-cluster/**
+      - infra/eks-cluster/**
 
 permissions:
   id-token: write # required to use OIDC authentication
