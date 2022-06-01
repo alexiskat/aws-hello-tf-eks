@@ -37,7 +37,7 @@ jobs:
           role-duration-seconds: 900 # the ttl of the session, in seconds.
           aws-region: ${{ env.AWS_REGION }}
       
-      - name: verify deployment
+      - name: Update k8s Cluster RBAC roles 
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ secrets.AWS_DEV_KUBE_CONFIG_DATA }}
