@@ -41,6 +41,6 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ secrets.AWS_DEV_KUBE_CONFIG_DATA }}
-          KUBECTL_VERSION: "v1.23"
+          KUBECTL_VERSION: "v1.23.6"
         with:
           args: apply -f cluster-rbac-roles.yml
