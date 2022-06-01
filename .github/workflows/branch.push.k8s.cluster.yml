@@ -42,4 +42,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.AWS_DEV_KUBE_CONFIG_DATA }}
         with:
-          args: apply -f cluster-rbac-roles
+          args: apply -f cluster-rbac-roles.yml
