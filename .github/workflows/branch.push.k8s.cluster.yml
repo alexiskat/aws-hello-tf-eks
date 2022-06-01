@@ -48,4 +48,4 @@ jobs:
           KUBE_CONFIG_DATA: ${{ secrets.AWS_DEV_KUBE_CONFIG_DATA }}
           KUBECTL_VERSION: "v1.23.6"
         with:
-          args: apply -f cluster-rbac-roles.yml
+          args: apply -f ./cluster-rbac-roles.yml
