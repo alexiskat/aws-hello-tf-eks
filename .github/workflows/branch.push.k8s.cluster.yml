@@ -17,10 +17,10 @@ permissions:
 env:
   ENV_NAME: dev
   AWS_REGION: eu-west-1
-  ROOT_PATH: eks-cluster
+  ROOT_PATH: infra/eks-cluster
 
 jobs:
-  Terraform-Checks:
+  K8s-Cluster-Update:
     runs-on: ubuntu-latest
     defaults:
       run:
