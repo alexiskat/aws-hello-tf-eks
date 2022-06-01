@@ -82,14 +82,19 @@ Edit the aws-auth configuration ```kubectl edit configmap/aws-auth -n kube-syste
 ```
 data:
   mapUsers: |
-    - userarn: arn:aws:iam::698251659182:user/tf
+    - userarn: arn:aws:iam::123456789012:user/tf
       username: tf
       groups:
         - system:masters
         - eks-console-dashboard-full-access-group
   mapRoles: |
-    - rolearn: arn:aws:iam::698251659182:role/AWS_ROLE_1_RANDOM_STRING
+    - rolearn: arn:aws:iam::123456789012:role/AWS_ROLE_1_RANDOM_STRING
       username: AWS_ROLE_1_RANDOM_STRING:{{SessionName}}
+      groups:
+        - system:masters
+        - eks-console-dashboard-full-access-group
+    - rolearn: arn:aws:iam::123456789012:role/AWS_GH_ROLE
+      username: AWS_GH_ROLE
       groups:
         - system:masters
         - eks-console-dashboard-full-access-group
